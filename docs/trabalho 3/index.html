@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
+    <title>Jogo da Memória</title>
+</head>
+<body>
+    <div id="memory-game"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = ['A', 'B', 'C', 'D', 'E', 'F', 'A', 'B', 'C', 'D', 'E', 'F'];
+
+            cards.sort(() => Math.random() - 0.5);
+
+            const memoryGame = document.getElementById('memory-game');
+            let selectedCards = [];
+            let matchedCards = [];
+
+
+            cards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.setAttribute('data-index', index);
+                cardElement.textContent = '?';
+                cardElement.addEventListener('click', flipCard);
+                memoryGame.appendChild(cardElement);
+            });
+
+            function flipCard() {
+                const selectedCardIndex = parseInt(this.getAttribute('data-index'));
+
+                if (selectedCards.includes(selectedCardIndex) || matchedCards.includes(selectedCardIndex)) {
+                    return;
+                }
+
+                this.textContent = cards[selectedCardIndex];
+                selectedCards.push(selectedCardIndex);
+
+                if (selectedCards.length === 2) {
+                    setTimeout(checkMatch, 500);
+                }
+            }
+
+            function checkMatch() {
+                const [index1, index2] = selectedCards;
+                const card1 = document.querySelector(`[data-index="${index1}"]`);
+                const card2 = document.querySelector(`[data-index="${index2}"]`);
+
+                if (cards[index1] === cards[index2]) {
+                    matchedCards.push(index1, index2);
+                } else {
+                    card1.textContent = '?';
+                    card2.textContent = '?';
+                }
+
+                selectedCards = [];
+
+                if (matchedCards.length === cards.length) {
+                    alert('Parabéns! Você encontrou todos os pares.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
